@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
+const path = require('path')
 
 const databaseConnect = require('./config/database')
 const authRouter = require('./routes/authRoute')
@@ -23,6 +24,11 @@ app.get('/', (req, res)=> {
 })
 
 databaseConnect();
+
+app.use(express.static("./frontend/build"));
+app.get("*", (req,res) =>{
+    res.sendFile(path.resolve(__dirname,"frontend", "build", "index.html"))
+});
 
 app.listen(PORT, ()=>{
     console.log(`Server is running on port ${PORT}`);
