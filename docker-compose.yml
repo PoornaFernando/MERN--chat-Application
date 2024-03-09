@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  mongo_db:
+    container_name: db_container
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongo_db:/data/db
+
+
+  backend:
+    image: poornafdo/chatapp:1.0
+    ports:
+      - '5556:8080'
+    environment:
+      - DATABASE_URL = mongodb+srv://mongo_db:Poorna1234@cluster0.u0die8g.mongodb.net/messenger
+      - SECRET = ASDKOFOJFOWFNK
+      - TOKEN_EXP = 7d
+      - COOKIE_EXP = 7
+    depends_on:
+      - mongo_db
+    deploy: 
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+    
+  frontend:
+    image: poornafdo/frontend:1.0
+    ports:
+      - '3001:3001'
+    deploy: 
+      replicas: 2
+      restart_policy:
+        condition: on-failure    
+
+  socket:
+    image: poornafdo/socket:1.0
+    ports:
+      - '8089:8089'
+    deploy: 
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+volumes:
+  mongo_db: {}
